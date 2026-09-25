@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 import os
-import launch, launch_ros
+import launch
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from ament_index_python.packages import get_package_prefix
 from launch_ros.actions import Node
 
 def generate_launch_description():
@@ -22,7 +21,7 @@ def generate_launch_description():
   
   state_pub = IncludeLaunchDescription(
     PythonLaunchDescriptionSource(
-      os.path.join(pkg_testbed_description, 'launch', 'robot_description.launch.py'),
+      os.path.join(pkg_testbed_description, 'launch', 'testbed_rviz_barebones.launch.py'),
     )
   )
 
@@ -32,9 +31,7 @@ def generate_launch_description():
     )
   )
   
-  rviz_config_dir = os.path.join(
-    launch_ros.substitutions.FindPackageShare(package='testbed_description').find('testbed_description'),
-    'rviz/full_bringup.rviz')
+  rviz_config_dir = os.path.join(pkg_testbed_description, 'rviz', 'full_bringup.rviz')
   
   rviz_node = Node(
     package='rviz2',
@@ -45,8 +42,11 @@ def generate_launch_description():
   )
 
   return LaunchDescription([
-    launch.actions.DeclareLaunchArgument(name='rvizconfig', default_value=rviz_config_dir,
-                                            description='Absolute path to rviz config file'),
+    DeclareLaunchArgument(
+      name='rvizconfig', 
+      default_value=rviz_config_dir,
+      description='Absolute path to rviz config file'
+    ),
     state_pub,
     gazebo,
     spawn,
