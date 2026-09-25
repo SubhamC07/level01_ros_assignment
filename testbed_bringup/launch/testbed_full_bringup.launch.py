@@ -1,12 +1,13 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 import os
-import launch
+
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+
 
 def generate_launch_description():
 
@@ -17,8 +18,8 @@ def generate_launch_description():
     PythonLaunchDescriptionSource(
       os.path.join(pkg_testbed_gazebo, 'launch', 'spawn_playground.launch.py'),
     )
-  ) 
-  
+  )
+
   state_pub = IncludeLaunchDescription(
     PythonLaunchDescriptionSource(
       os.path.join(pkg_testbed_description, 'launch', 'testbed_rviz_barebones.launch.py'),
@@ -30,9 +31,10 @@ def generate_launch_description():
       os.path.join(pkg_testbed_gazebo, 'launch', 'spawn_testbed.launch.py'),
     )
   )
-  
-  rviz_config_dir = os.path.join(pkg_testbed_description, 'rviz', 'full_bringup.rviz')
-  
+
+  # Default RViz config path changed to Nav2 default view
+  nav2_rviz_config_dir = '/opt/ros/humble/share/nav2_bringup/rviz/nav2_default_view.rviz'
+
   rviz_node = Node(
     package='rviz2',
     executable='rviz2',
@@ -43,8 +45,8 @@ def generate_launch_description():
 
   return LaunchDescription([
     DeclareLaunchArgument(
-      name='rvizconfig', 
-      default_value=rviz_config_dir,
+      name='rvizconfig',
+      default_value=nav2_rviz_config_dir,
       description='Absolute path to rviz config file'
     ),
     state_pub,
