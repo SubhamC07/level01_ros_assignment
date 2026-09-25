@@ -51,6 +51,22 @@ def generate_launch_description():
         parameters=[params_file, {'use_sim_time': use_sim_time}],
     )
 
+    global_costmap = Node(
+        package='nav2_costmap_2d',
+        executable='nav2_costmap_2d',
+        name='global_costmap',
+        output='screen',
+        parameters=[params_file, {'use_sim_time': use_sim_time}],
+    )
+
+    local_costmap = Node(
+        package='nav2_costmap_2d',
+        executable='nav2_costmap_2d',
+        name='local_costmap',
+        output='screen',
+        parameters=[params_file, {'use_sim_time': use_sim_time}],
+    )
+
     smoother_server = Node(
         package='nav2_smoother',
         executable='smoother_server',
@@ -128,6 +144,8 @@ def generate_launch_description():
         use_sim_time_arg,
         controller_server,
         planner_server,
+        global_costmap,
+        local_costmap,
         smoother_server,
         behavior_server,
         bt_navigator,
